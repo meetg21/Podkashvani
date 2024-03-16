@@ -23,8 +23,8 @@ const Upload = () => {
         return;
       }
 
-      setSelectedPdf(result);
-      uploadPdf(result);
+      await setSelectedPdf(result);
+      await uploadPdf(result);
     } catch (error) {
       console.error('Error selecting Pdf:', error);
       setUploadError(error);
