@@ -13,7 +13,7 @@ const images = [
 const LENGTH = images.length;
 
 export default function Customize() {
-    const [index, setIndex] = React.useState(null); // Initialize with null
+    const [index, setIndex] = React.useState(0); // Initialize with null
 
     const carouselRef = React.useRef(null);
 
@@ -34,7 +34,7 @@ export default function Customize() {
         <LinearGradient colors={['#FFFDF4', '#00AAFF']} style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => console.log('Back button pressed')}>
-                    <Back size="32" color="#FF8A65" />
+                    <Back size="32" color="#000" />
                 </TouchableOpacity>
                 <Text style={styles.headerText}>Customize your Guest character</Text>
             </View>
@@ -49,40 +49,29 @@ export default function Customize() {
                 onSnapToItem={(index) => setIndex(index)}
             />
 
+            <View style={{position: "relative", top: -250, width: "100%", display: "flex", alignItems:"center"}}>
             <Text style={{fontSize: 20, color: '#212121', backgroundColor:"#fff", padding: 20, width: "100%", margin: 20}}>Audio Preview</Text>
 
             <View style={styles.chipContainer}>
-                <Text style={{color: "black", fontSize: 20, fontWeight: 500, margin: 20}}>Properties</Text>
+                <Text style={{color: "black", fontSize: 20, fontWeight: 500, marginBottom: 20}}>Properties</Text>
                 <View style={styles.chipInnerContainer}>
                     <Chip
                         style = {{margin: 5}}
                         onPress={() => console.log('Pressed')}
                     >
-                        <VoiceSquare
-                            size="16"
-                            color="#fff"
-                        />
-                        English
+                        {images[index].accent}
                     </Chip>
                     <Chip
                         style = {{margin: 5}}
                         onPress={() => console.log('Pressed')}
                     >
-                        <VoiceSquare
-                            size="16"
-                            color="#fff"
-                        />
-                        Marathi
+                        {images[index].language}
                     </Chip>
                     <Chip
                         style = {{margin: 5}}
                         onPress={() => console.log('Pressed')}
                     >
-                        <VoiceSquare
-                            size="16"
-                            color="#fff"
-                        />
-                        Hindi
+                        {images[index].speed}
                     </Chip>
                 </View>
             </View>
@@ -96,8 +85,9 @@ export default function Customize() {
                     inactiveDotScale={0.6}
                 />
             )}
+            </View>
         </LinearGradient>
-       
+    
     );
 }
 
@@ -105,8 +95,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
-     
     },
     header: {
         flexDirection: 'row',
@@ -142,7 +130,7 @@ const styles = StyleSheet.create({
         width: 10,
         height: 10,
         borderRadius: 5,
-        backgroundColor: 'red',
+        backgroundColor: 'blue',
         marginHorizontal: 8,
     },
     
