@@ -3,7 +3,8 @@ import * as React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
-import { Chip } from 'react-native-paper';
+import { Button, Chip } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const images = [
     { source: require('../assets/images/Joey.png'), name: 'Joey', accent: "US", language: "English", speed: "fast" },
@@ -30,6 +31,40 @@ export default function Customize() {
         </TouchableOpacity>
     );
 
+    const handleCreate = async () => {
+        try {
+            // await AsyncStorage.setItem('guestName', "Joey");
+            // await AsyncStorage.setItem('guestCountry', "US");
+
+            const pdfUrl = await AsyncStorage.getItem('pdfUrl') // Replace with your PDF URL
+            const pdfName = await AsyncStorage.getItem('pdfName') // Replace with your PDF name
+            console.log(pdfUrl);
+            // const guestName = await AsyncStorage.getItem('guestName');
+            // const guestCountry = await AsyncStorage.getItem('guestCountry');
+            const guestName = "Joey";
+            const guestCountry = "US";
+
+            // Make API request to send guest data and PDF URL
+            const apiUrl = `https://himanshupatil17000-8a5c4268-de97-4069-a249-eedac4800270.socketxp.com/podcast?url=${pdfName}&guest=${guestName}&country=${guestCountry}`;
+            const response = await fetch(apiUrl, {
+                method: 'GET', // Assuming your API expects a GET request
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                // Handle success
+                console.log('API request successful');
+            } else {
+                // Handle error
+                console.error('API request failed');
+                console.log("Error: ", response.status, response.statusText)
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
     return (
         <LinearGradient colors={['#FFFDF4', '#00AAFF']} style={styles.container}>
             <View style={styles.header}>
@@ -38,8 +73,8 @@ export default function Customize() {
                 </TouchableOpacity>
                 <Text style={styles.headerText}>Customize your Guest character</Text>
             </View>
-            
-            <View style={{marginTop:'6%'}}></View>
+
+            <View style={{ marginTop: '6%' }}></View>
             <Carousel
                 ref={carouselRef}
                 data={images}
@@ -49,13 +84,13 @@ export default function Customize() {
                 onSnapToItem={(index) => setIndex(index)}
             />
 
-            <Text style={{fontSize: 20, color: '#212121', backgroundColor:"#fff", padding: 20, width: "100%", margin: 20}}>Audio Preview</Text>
+            <Text style={{ fontSize: 20, color: '#212121', backgroundColor: "#fff", padding: 20, width: "100%", margin: 20 }}>Audio Preview</Text>
 
             <View style={styles.chipContainer}>
-                <Text style={{color: "black", fontSize: 20, fontWeight: 500, margin: 20}}>Properties</Text>
+                <Text style={{ color: "black", fontSize: 20, fontWeight: 500, margin: 20 }}>Properties</Text>
                 <View style={styles.chipInnerContainer}>
                     <Chip
-                        style = {{margin: 5}}
+                        style={{ margin: 5 }}
                         onPress={() => console.log('Pressed')}
                     >
                         <VoiceSquare
@@ -65,7 +100,7 @@ export default function Customize() {
                         English
                     </Chip>
                     <Chip
-                        style = {{margin: 5}}
+                        style={{ margin: 5 }}
                         onPress={() => console.log('Pressed')}
                     >
                         <VoiceSquare
@@ -75,7 +110,7 @@ export default function Customize() {
                         Marathi
                     </Chip>
                     <Chip
-                        style = {{margin: 5}}
+                        style={{ margin: 5 }}
                         onPress={() => console.log('Pressed')}
                     >
                         <VoiceSquare
@@ -96,8 +131,9 @@ export default function Customize() {
                     inactiveDotScale={0.6}
                 />
             )}
+            <Button mode="contained" onPress={handleCreate}> Create Podcast </Button>
         </LinearGradient>
-       
+
     );
 }
 
@@ -106,7 +142,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-     
+
     },
     header: {
         flexDirection: 'row',
@@ -145,7 +181,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'red',
         marginHorizontal: 8,
     },
-    
+
 
     chipContainer: {
         display: "flex",
