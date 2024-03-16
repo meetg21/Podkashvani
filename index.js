@@ -26,7 +26,7 @@ export default function Main() {
           }}>
           {/* <Stack.Screen name="Home" component={App} /> */}
           {/* <Stack.Screen name="Login" component={Login} /> */}
-          <Stack.Screen name="PodcastPlayer" component={PodcastPlayer} />
+          {/* <Stack.Screen name="PodcastPlayer" component={PodcastPlayer} /> */}
           {/* <Stack.Screen name="PlayPodcast" component={PlayPodcast} /> */}
           <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="Upload" component={Upload} />
