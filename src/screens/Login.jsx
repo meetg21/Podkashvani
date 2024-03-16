@@ -5,6 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useNavigation } from '@react-navigation/native';
 
 GoogleSignin.configure({
   // webClientId: process.env.Client_id,
@@ -32,6 +33,7 @@ const SignupScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  let navigation = useNavigation();
 
   const handleSignup = () => {
     // Your signup logic here
@@ -76,7 +78,7 @@ const SignupScreen = () => {
           <Text style={styles.orText}>or</Text>
           <View style={styles.line} />
         </View>
-        <TouchableOpacity style={styles.googleButton} onPress={() => onGoogleButtonPress().then(() => console.log('Signed in with Google!'))}>
+        <TouchableOpacity style={styles.googleButton} onPress={() => onGoogleButtonPress().then(() => navigation.navigate('Home'))}>
           <Image source={require('../assets/images/google.png')} style={styles.googleLogo} resizeMode="contain" />
           <Text style={styles.googleText}>Sign in with Google</Text>
         </TouchableOpacity>

@@ -12,36 +12,30 @@ const BottomNavBar = ({ activeScreen }) => {
 
   return (
     <View style={styles.navBar}>
-      <View style={styles.leftIcons}>
-        <TouchableOpacity
-          style={styles.iconContainer}
-          onPress={() => handleIconPress('BookSaved')}
-        >
-          <BookSaved size="32" color={activeIcon === 'BookSaved' ? '#64C1DE' : 'white'} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconContainer}
-          onPress={() => handleIconPress('Home')}
-        >
-          <Home2 size="32" color={activeIcon === 'Home' ? '#64C1DE' : 'white'} />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.gap} />
-
-      <View style={styles.rightIcons}>
-        <TouchableOpacity
-          style={styles.iconContainer}
-          onPress={() => handleIconPress('SearchStatus')}
-        >
-          <SearchStatus size="32" color={activeIcon === 'SearchStatus' ? '#64C1DE' : 'white'} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconContainer}
-          onPress={() => handleIconPress('Profile')}
-        >
-          <Profile size="32" color={activeIcon === 'Profile' ? '#64C1DE' : 'white'} />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={styles.iconContainer}
+        onPress={() => handleIconPress('BookSaved')}
+      >
+        <BookSaved size="28" color={activeIcon === 'BookSaved' ? '#64C1DE' : 'white'} />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.iconContainer}
+        onPress={() => handleIconPress('Home')}
+      >
+        <Home2 size="28" color={activeIcon === 'Home' ? '#64C1DE' : 'white'} />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.iconContainer}
+        onPress={() => handleIconPress('SearchStatus')}
+      >
+        <SearchStatus size="28" color={activeIcon === 'SearchStatus' ? '#64C1DE' : 'white'} />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.iconContainer}
+        onPress={() => handleIconPress('Profile')}
+      >
+        <Profile size="28" color={activeIcon === 'Profile' ? '#64C1DE' : 'white'} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -51,7 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#120537',
     height: 60,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between', // Ensure equal distance between icons
     alignItems: 'center',
     paddingHorizontal: 15,
     // Temp
@@ -62,21 +56,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
-  leftIcons: {
-    flexDirection: 'row',
-  },
-  rightIcons: {
-    flexDirection: 'row',
-  },
-  gap: {
-    width: 30,
-  },
   iconContainer: {
     padding: 20,
-  },
-  icon: {
-    width: 24,
-    height: 24,
   },
 });
 
