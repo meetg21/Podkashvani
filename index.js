@@ -23,7 +23,7 @@ export default function Main() {
           screenOptions={{
             headerShown: false,
           }}>
-          <Stack.Screen name="Home" component={App} />
+          {/* <Stack.Screen name="Home" component={App} /> */}
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="PodcastPlayer" component={PodcastPlayer} />
           <Stack.Screen name="Profile" component={Profile} />
