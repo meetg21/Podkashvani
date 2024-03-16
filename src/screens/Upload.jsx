@@ -23,8 +23,8 @@ const Upload = () => {
         return;
       }
 
-      setSelectedPdf(result);
-      uploadPdf(result);
+      await setSelectedPdf(result);
+      await uploadPdf(result);
     } catch (error) {
       console.error('Error selecting Pdf:', error);
       setUploadError(error);
@@ -71,6 +71,7 @@ const Upload = () => {
         <Image source={require('../assets/images/upload.png')} style={{ width: 140, height: 100 }} />
         <Text style={styles.text}>you can drag and drop images to upload </Text>
         <Button style={styles.Button} onPress={pickPdf}>Browse</Button>
+        {selectedPdf ? <Button onPress={uploadPdf}>Upload</Button>: ''}
       </View>
     </View>
   );

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PodcastComponent from '../components/PodcastComponent';
+import BottomNavBar from '../components/BottomNavBar';
 
 const Profile = () => {
   const [tabState, setTabState] = useState(true); // State to track the active tab
@@ -97,6 +98,7 @@ const Profile = () => {
           )}
         </ScrollView>
       </View>
+      <BottomNavBar></BottomNavBar>
     </LinearGradient>
   );
 };
@@ -118,7 +120,7 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     backgroundColor: "#120537",
-    flex: 0.6,
+    flex: 0.65,
     alignContent: "center",
     width: "100%",
     borderBottomLeftRadius: 30,
@@ -151,6 +153,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingHorizontal: 20,
     flex: 1,
+    paddingBottom: 60,
   },
   podcastHeader: {
     color: "#120537",
