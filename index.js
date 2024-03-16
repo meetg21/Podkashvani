@@ -12,6 +12,7 @@ import Login from './src/screens/Login';
 import PodcastPlayer from './src/screens/PodcastPlayer';
 import Profile from './src/screens/Profile';
 import Upload from './src/screens/Upload';
+import PlayPodcast from './src/screens/PlayPodcast';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,8 +25,9 @@ export default function Main() {
             headerShown: false,
           }}>
           {/* <Stack.Screen name="Home" component={App} /> */}
-          <Stack.Screen name="Login" component={Login} />
-          {/* <Stack.Screen name="PodcastPlayer" component={PodcastPlayer} /> */}
+          {/* <Stack.Screen name="Login" component={Login} /> */}
+          <Stack.Screen name="PodcastPlayer" component={PodcastPlayer} />
+          {/* <Stack.Screen name="PlayPodcast" component={PlayPodcast} /> */}
           <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="Upload" component={Upload} />
         </Stack.Navigator>
