@@ -3,8 +3,11 @@ import { Image, Text, View, StyleSheet } from 'react-native';
 import { Button, Card } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import storage from '@react-native-firebase/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const Upload = () => {
+  let navigation = useNavigation();
 
   const [selectedPdf, setSelectedPdf] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -39,8 +42,9 @@ const Upload = () => {
 
     try {
       console.log('Uploading Pdf:', selectedPdf[0].name);
+      AsyncStorage.setItem('pdfName', selectedPdf[0].name);
       console.log('url: ', selectedPdf[0].content);
-      const reference = storage().ref(`/Pdf/${selectedPdf[0].name}`); // Use original filename
+      const reference = storage().ref(`/documents/${selectedPdf[0].name}`); // Use original filename
       const uploadTask = reference.putFile(selectedPdf[0].uri);
 
       uploadTask.on('state_changed',
@@ -57,6 +61,9 @@ const Upload = () => {
           const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
           console.log('Pdf uploaded successfully!', downloadURL);
           // Use downloadURL (e.g., display or share the uploaded Pdf)
+          AsyncStorage.setItem('pdfUrl', downloadURL);
+          navigation.navigate('Customize');
+          
         }
       );
     } catch (error) {
