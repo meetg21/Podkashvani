@@ -4,6 +4,12 @@ import Sound from 'react-native-sound';
 import Slider from '@react-native-community/slider';
 import ChatScreen from './ChatScreen';
 import LinearGradient from 'react-native-linear-gradient';
+import {Previous} from 'iconsax-react-native';
+import {Next} from 'iconsax-react-native';
+import {Pause} from 'iconsax-react-native';
+import {Play} from 'iconsax-react-native';
+import {Back} from 'iconsax-react-native';
+
 
 const podcasts = [
     {
@@ -16,23 +22,27 @@ const podcasts = [
       image: require('../assets/images/podcast_image.png'),
       title: 'Podcast Title 2',
       author: 'Author 2',
-      audio: 'hurayyy.mp3',
+      audio: 'dialogue.mp3',
     },
-    // Add more podcasts as needed
+    
   ];
 
 const PodcastPlayer = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
+    const [currentPodcastIndex, setCurrentPodcastIndex] = useState(0);
     const soundRef = useRef(null);
     const timerRef = useRef(null);
     const [pausedTime, setPausedTime] = useState(0);
 
     useEffect(() => {
         if (isPlaying) {
+            if (soundRef.current) {
+                soundRef.current.release(); 
+            }
             if (!soundRef.current) {
-                soundRef.current = new Sound(podcasts[0].audio, Sound.MAIN_BUNDLE, (error) => {
+                soundRef.current = new Sound(podcasts[currentPodcastIndex].audio, Sound.MAIN_BUNDLE, (error) => {
                     if (error) {
                         console.log('failed to load the sound', error);
                         return;
@@ -78,7 +88,17 @@ const PodcastPlayer = () => {
                 soundRef.current = null;
             }
         };
-    }, [isPlaying]);
+    }, [isPlaying, currentPodcastIndex]);
+
+    const playNextPodcast = () => {
+        const nextIndex = currentPodcastIndex === podcasts.length - 1 ? 0 : currentPodcastIndex + 1;
+        setCurrentPodcastIndex(nextIndex);
+    };
+
+    const playPreviousPodcast = () => {
+        const prevIndex = currentPodcastIndex === 0 ? podcasts.length - 1 : currentPodcastIndex - 1;
+        setCurrentPodcastIndex(prevIndex);
+    };
 
     const startTimer = () => {
         timerRef.current = setInterval(() => {
@@ -99,23 +119,22 @@ const PodcastPlayer = () => {
     };
 
     return (
-        // <LinearGradient colors={['#FFFDF4', '#00AAFF']} style={styles.container}>
         <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity style={styles.backButton}>
-                    <Text style={styles.backButtonText}>Back</Text>
+                    <Back size="32" color="#120537"/>
                 </TouchableOpacity>
             </View>
             <View style={styles.imageContainer}>
                 <Image
-                    source={podcasts[0].image}
+                    source={podcasts[currentPodcastIndex].image}
                     style={styles.podcastImage}
                 />
             </View>
 
-            <Text style={styles.title}>{podcasts[0].title}</Text>
+            <Text style={styles.title}>{podcasts[currentPodcastIndex].title}</Text>
 
-            <Text style={styles.author}>{podcasts[0].author}</Text>
+            <Text style={styles.author}>{podcasts[currentPodcastIndex].author}</Text>
 
             <Slider
                 style={styles.slider}
@@ -139,7 +158,13 @@ const PodcastPlayer = () => {
             </View>
 
             <TouchableOpacity style={styles.playButton} onPress={playSound}>
-                <Text style={styles.playButtonText}>{isPlaying ? 'Pause' : 'Play'}</Text>
+                {isPlaying ? <Pause size="32" color="#120537"/> : <Play size="32" color="#120537"/> }
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.nextButton} onPress={playNextPodcast}>
+                <Next size="32" color="#120537"/>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.previousButton} onPress={playPreviousPodcast}>
+                <Previous size="32" color="#120537"/>
             </TouchableOpacity>
 
             <Image
@@ -149,6 +174,7 @@ const PodcastPlayer = () => {
             
             <ChatScreen />
         </View>
+        
        
        
     );
@@ -157,7 +183,23 @@ const PodcastPlayer = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#00f',
+    },
+    nextButton: {
+        position: 'absolute',
+        bottom: 262,
+        right: 70,
+        padding: 10,
+        borderRadius: 5,
+    },
+    previousButton: {
+        position: 'absolute',
+        bottom: 262,
+        left: 70,
+        padding: 10,
+    },
+    buttonText: {
+        color: '#FFF',
+        fontSize: 16,
     },
     header: {
         flexDirection: 'row',
@@ -213,11 +255,10 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     playButton: {
-        backgroundColor: '#120537',
         padding: 10,
         borderRadius: 5,
         alignSelf: 'center',
-        marginTop: 20,
+        marginTop: 0,
     },
     playButtonText: {
         color: '#FFF',

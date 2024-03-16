@@ -9,6 +9,8 @@ const ChatScreen = () => {
   const [message, setMessage] = useState('');
   const [conversation, setConversation] = useState([]);
 
+  
+
   const sendChatRequest = async (message, setConversation) => {
     try {
       const response = await axios.post(

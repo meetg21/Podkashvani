@@ -78,6 +78,7 @@ const Upload = () => {
         <Image source={require('../assets/images/upload.png')} style={{ width: 140, height: 100 }} />
         <Text style={styles.text}>you can drag and drop images to upload </Text>
         <Button style={styles.Button} onPress={pickPdf}>Browse</Button>
+        {selectedPdf ? <Button onPress={uploadPdf}>Upload</Button>: ''}
       </View>
     </View>
   );
