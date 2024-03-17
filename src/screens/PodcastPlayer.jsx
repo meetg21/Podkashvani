@@ -175,8 +175,6 @@ const PodcastPlayer = () => {
             <ChatScreen />
         </View>
         
-       
-       
     );
 };
 

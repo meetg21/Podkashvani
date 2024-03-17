@@ -50,8 +50,7 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         padding: 20,
         color: '#120537',
-
-
+        fontWeight: "900",
     },
     stepContainer: {
         marginLeft: 20,
@@ -59,6 +58,7 @@ const styles = StyleSheet.create({
       stepText: {
         fontSize: 16,
         marginBottom: 5,
+        color: "#fff"
       },
       stepNumber: {
         fontWeight: 'bold',
