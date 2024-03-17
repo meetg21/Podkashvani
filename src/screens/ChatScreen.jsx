@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, TextInput, Text, StyleSheet, Image, ScrollView, SafeAreaView } from 'react-native';
+import { View, TextInput, Text, StyleSheet, Image, ScrollView, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { Button } from 'react-native-paper';
 import SwipeUpDown from 'react-native-swipe-up-down';
 import axios from 'axios';
@@ -9,6 +9,7 @@ const ChatScreen = () => {
   const [message, setMessage] = useState('');
   const [conversation, setConversation] = useState([]);
 
+  const context = "Software security concerns the protection of software from malicious attacks. Memory allocation in computers separates code and data, with the heap growing towards higher addresses and the stack growing downwards from higher addresses. Buffer overflows occur when data is written beyond its allocated space, such as a 10th byte in a 9-byte array. In an exploitable buffer overflow, an attacker's inputs overflow into memory allocated for code, overwriting it with malicious instructions. To exploit this, attackers need to find buffer overflow opportunities that lead to executable code being overwritten and the right code to input. The location of the buffer overflow can affect the extent of the attack, as it determines the memory that is overwritten and the potential impact on the program or system."
   
 
   const sendChatRequest = async (message, setConversation) => {
@@ -19,13 +20,14 @@ const ChatScreen = () => {
           model: 'gpt-3.5-turbo',
           messages: [
             { role: 'system', content: 'You are a helpful assistant.' },
+            { role: 'user', content: context },
             { role: 'user', content: message },
           ],
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': '',
+            'Authorization': 'Bearer ',
           },
         }
       );
@@ -93,7 +95,7 @@ const FullChatScreen = ({ conversation, message, setMessage, sendChatMessage }) 
       </ScrollView>
     </View>
 
-    <View style={styles.inputArea}>
+    <KeyboardAvoidingView style={styles.inputArea} behavior="height" enabled>
       <TextInput
         style={styles.input}
         value={message}
@@ -104,7 +106,7 @@ const FullChatScreen = ({ conversation, message, setMessage, sendChatMessage }) 
       <Button mode="contained" onPress={sendChatMessage}>
         Send
       </Button>
-    </View>
+    </KeyboardAvoidingView>
   </View>
 );
 
@@ -145,7 +147,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
+    marginBottom: 16,
     backgroundColor: '#fff',
+    position: "absolute",
+    bottom: 0,
   },
   input: {
     flex: 1,
