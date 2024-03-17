@@ -5,6 +5,7 @@ import DocumentPicker from 'react-native-document-picker';
 import storage from '@react-native-firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { DocumentUpload } from 'iconsax-react-native';
 
 const Upload = () => {
   let navigation = useNavigation();
@@ -75,8 +76,11 @@ const Upload = () => {
   return (
     <View style={styles.container}>
       <View style={styles.uploadContainer}>
-        <Image source={require('../assets/images/upload.png')} style={{ width: 140, height: 100 }} />
-        <Text style={styles.text}>you can drag and drop images to upload </Text>
+        {/* <Image source={require('../assets/images/upload.png')} style={{ width: 140, height: 100 }} /> */}
+        <DocumentUpload
+          size="100"
+          color="#120537"
+        />
         <Button style={styles.Button} onPress={pickPdf}>Browse</Button>
         {selectedPdf ? <Button onPress={uploadPdf}>Upload</Button>: ''}
       </View>
@@ -93,37 +97,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // height: '100%',
+    marginBottom: 20,
   },
   uploadContainer: {
-    width: 300,
-    height: 300,
+    width: "90%",
+    height: 350,
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: 'red',
+    backgroundColor: 'rgba(155,221,255,0.8)',  
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.6)',
+    borderRadius: 20,
   },
   text:{
     fontSize: 12,
     color: 'black',
-
+    margin: 10,
     fontFamily: 'Poppins-Medium',
   },
   Button: {
     paddingHorizontal: 20, // Add horizontal padding to the button
     paddingVertical: 10,    // Add vertical padding to the button
-    backgroundColor: '#290477',
+    margin: 20,
+    backgroundColor: '#120537',
     color: 'white',
     borderRadius: 20,
     fontFamily: 'Poppins-Medium',
-    fontSize:'20%',
   },
 });

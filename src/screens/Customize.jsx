@@ -1,22 +1,56 @@
 import { Back, VoiceSquare, Location } from 'iconsax-react-native';
-import * as React from 'react';
+import React, { useState, useRef } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { Button, Chip } from 'react-native-paper';
+import Sound from 'react-native-sound';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Pause, Play } from 'iconsax-react-native';
+
 
 const images = [
-    { source: require('../assets/images/Joey.png'), name: 'Joey', accent: "US", language: "English", speed: "fast" },
-    { source: require('../assets/images/Joey.png'), name: 'Image 2', accent: "UK", language: "English", speed: "medium" },
+    { source: require('../assets/images/Joey.png'), name: 'Joey Ange', accent: "US", language: "English", speed: "fast" ,audio:'joey.mp3'},
+    { source: require('../assets/images/jeetu.png'), name: 'Abdul Bhari', accent: "Indian", language: "English", speed: "slow",audio:'abdul.mp3' },
+    { source: require('../assets/images/jenny.png'), name: 'Jenny Mam ', accent: "Indian", language: "English", speed: "medium" ,audio:'jenny.mp3'},
+    { source: require('../assets/images/swift.png'), name: 'Angela Yu', accent: "UK", language: "English", speed: "medium",audio:'angela.mp3' },
     // Add more images as needed
 ];
 const LENGTH = images.length;
 
 export default function Customize() {
     const [index, setIndex] = React.useState(0); // Initialize with null
-
+    const [sound, setSound] = React.useState(null);
     const carouselRef = React.useRef(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const soundRef = useRef(null);
+
+    const startAudio = () => {
+        if (!isPlaying) {
+            soundRef.current = new Sound(images[index].audio, Sound.MAIN_BUNDLE, (error) => {
+                if (error) {
+                    console.log('Error loading sound:', error);
+                    return;
+                }
+                soundRef.current.play((success) => {
+                    if (success) {
+                        console.log('Successfully finished playing');
+                        setIsPlaying(false);
+                    } else {
+                        console.log('Playback failed due to audio decoding errors');
+                    }
+                });
+            });
+            setIsPlaying(true);
+        }
+    };
+
+    const pauseAudio = () => {
+        if (isPlaying && soundRef.current) {
+            soundRef.current.pause();
+            setIsPlaying(false);
+        }
+    };
 
     const renderItem = ({ item, index: itemIndex }) => (
         <TouchableOpacity
@@ -65,13 +99,30 @@ export default function Customize() {
             console.error('Error:', error);
         }
     };
+    const handlePlayAudio = () => {
+        const sound = new Sound(images[index].audio, Sound.MAIN_BUNDLE, (error) => {
+            if (error) {
+                console.log('Error loading sound:', error);
+                return;
+            }
+            // Play the sound
+            sound.play((success) => {
+                if (success) {
+                    console.log('Successfully finished playing');
+                } else {
+                    console.log('Playback failed due to audio decoding errors');
+                }
+            });
+        });
+    };
+
     return (
         <LinearGradient colors={['#FFFDF4', '#00AAFF']} style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => console.log('Back button pressed')}>
                     <Back size="32" color="#000" />
                 </TouchableOpacity>
-                <Text style={styles.headerText}>Customize your Guest character</Text>
+                <Text style={styles.headerText}>Choose Your Customization</Text>
             </View>
 
             <View style={{ marginTop: '6%' }}></View>
@@ -84,8 +135,20 @@ export default function Customize() {
                 onSnapToItem={(index) => setIndex(index)}
             />
 
-            <View style={{position: "relative", top: -250, width: "100%", display: "flex", alignItems:"center"}}>
-            <Text style={{fontSize: 20, color: '#212121', backgroundColor:"#fff", padding: 20, width: "100%", margin: 20}}>Audio Preview</Text>
+<View style={styles.audioControls}>
+                {isPlaying ? (
+                    <TouchableOpacity style={styles.audioButton} onPress={pauseAudio}>
+                        <Pause size="32" color="#120537"/>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity style={styles.audioButton} onPress={startAudio}>
+                        <Play size="32" color="#120537"/>
+                    </TouchableOpacity>
+                )}
+            </View>
+
+            <View style={{width: "100%", display: "flex", alignItems:"center"}}>
+            {/* <Text style={{fontSize: 20, color: '#212121', backgroundColor:"#fff", padding: 20, width: "100%", margin: 20}}>Audio Preview</Text> */}
 
             <View style={styles.chipContainer}>
                 <Text style={{color: "black", fontSize: 20, fontWeight: 500, marginBottom: 20}}>Properties</Text>
@@ -120,8 +183,9 @@ export default function Customize() {
                     inactiveDotScale={0.6}
                 />
             )}
-            <Button mode="contained" onPress={handleCreate}> Create Podcast </Button>
+              <Button style={{}} mode="contained" onPress={handleCreate}> Create Podcast </Button>
             </View>
+          
         </LinearGradient>
 
     );
@@ -131,6 +195,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
+    },
+    audioControls: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    audioButton: {
+        padding: 30,
+        borderRadius: 5,
+        // marginHorizontal: 10,
     },
     header: {
         flexDirection: 'row',
@@ -145,13 +219,13 @@ const styles = StyleSheet.create({
     },
     carouselItem: {
         width: 300, // Adjust as needed
-        height: 300, // Adjust as needed
-        borderWidth: 2,
-        borderRadius: 10,
+        height: 450, // Adjust as needed
+        // borderWidth: 2,
+        // borderRadius: 10,
         marginHorizontal: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#212121',
+        // backgroundColor: '#FFFFFE',
     },
     image: {
         width: '100%',
@@ -159,8 +233,10 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
     },
     imageName: {
-        fontSize: 16,
-        marginTop: 5,
+        fontSize: 26,
+        marginTop: 50,
+        // font:'poppons-medium',
+        color:'#120537',
     },
     paginationDot: {
         width: 10,
