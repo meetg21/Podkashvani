@@ -1,42 +1,45 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Snackbar } from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
-
-
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useNavigation } from '@react-navigation/native';
 
 GoogleSignin.configure({
-  // webClientId: process.env.Client_id,
   webClientId: '258261459057-3kef70be4700sccn4shs3djjkcj6mn7d.apps.googleusercontent.com',
 });
-
-async function onGoogleButtonPress() {
-  // Check if your device supports Google Play
-  await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-  // Get the users ID token
-  const res = await GoogleSignin.signIn();
-
-  // console.log("idtoken:",res)
-  // Create a Google credential with the token
-  const googleCredential = auth.GoogleAuthProvider.credential(res.idToken);
-
-  // Sign-in the user with the credential
-  await auth().signInWithCredential(googleCredential);
-}
-
-
-
 
 const SignupScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  let navigation = useNavigation();
+  const [snackbarVisible, setSnackbarVisible] = useState(false); // State for Snackbar visibility
+  const navigation = useNavigation();
 
   const handleSignup = () => {
     // Your signup logic here
+  };
+
+  const onGoogleButtonPress = async () => {
+    // Check if your device supports Google Play
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    // Get the users ID token
+    const res = await GoogleSignin.signIn();
+
+    // Create a Google credential with the token
+    const googleCredential = auth.GoogleAuthProvider.credential(res.idToken);
+
+    // Sign-in the user with the credential
+    await auth().signInWithCredential(googleCredential);
+
+    // Show Snackbar
+    setSnackbarVisible(true);
+
+    // Navigate to home screen after a delay
+    setTimeout(() => {
+      navigation.navigate('Home');
+    }, 2000); // Adjust the delay as needed
   };
 
   return (
@@ -78,10 +81,19 @@ const SignupScreen = () => {
           <Text style={styles.orText}>or</Text>
           <View style={styles.line} />
         </View>
-        <TouchableOpacity style={styles.googleButton} onPress={() => onGoogleButtonPress().then(() => navigation.navigate('Home'))}>
+        <TouchableOpacity style={styles.googleButton} onPress={onGoogleButtonPress}>
           <Image source={require('../assets/images/google.png')} style={styles.googleLogo} resizeMode="contain" />
           <Text style={styles.googleText}>Sign in with Google</Text>
         </TouchableOpacity>
+        {/* Snackbar */}
+        <Snackbar
+          visible={snackbarVisible}
+          onDismiss={() => setSnackbarVisible(false)}
+          duration={2000} // Adjust duration as needed
+          style={{ backgroundColor: 'green' }}
+        >
+          Welcome to Podcashvani
+        </Snackbar>
       </View>
     </LinearGradient>
   );
