@@ -6,6 +6,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from '@react-native-firebase/firestore';
 
 GoogleSignin.configure({
   // webClientId: process.env.Client_id,
@@ -13,18 +15,53 @@ GoogleSignin.configure({
 });
 
 async function onGoogleButtonPress() {
-  // Check if your device supports Google Play
-  await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-  // Get the users ID token
-  const res = await GoogleSignin.signIn();
+  try {
+    // Check if your device supports Google Play
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
-  // console.log("idtoken:",res)
-  // Create a Google credential with the token
-  const googleCredential = auth.GoogleAuthProvider.credential(res.idToken);
+    // Get the users ID token
+    const res = await GoogleSignin.signIn();
 
-  // Sign-in the user with the credential
-  await auth().signInWithCredential(googleCredential);
+    // Create a Google credential with the token
+    const googleCredential = auth.GoogleAuthProvider.credential(res.idToken);
+
+    // Sign-in the user with the credential
+    await auth().signInWithCredential(googleCredential);
+
+    // After signing in successfully, save user details to AsyncStorage
+    // await AsyncStorage.setItem('userEmail', res.user.email);
+    // await AsyncStorage.setItem('userName', res.user.name);
+
+    // Save user details to Firestore
+    // await firestore().collection('Users').add({
+    //   name: res.user.name,
+    //   email: res.user.email,
+    //   // Add more user details as needed
+    // });
+
+    // Fetch the response from Firestore
+    const firestoreResponse = await firestore().collection('Users').where('email', '==', res.user.email).get();
+    // Extract the data from the response
+    const userData = firestoreResponse.docs.map(doc => doc.data());
+
+    // Create a JSON-serializable object from the user data
+    const serializableUserData = userData.map(user => ({
+      name: user.name,
+      email: user.email,
+      podcasts: user.podcasts
+      // Add more fields as needed
+    }));
+
+    // Store the user data from Firestore in AsyncStorage
+    await AsyncStorage.setItem('userData', JSON.stringify(serializableUserData));
+
+    // Perform any additional actions here, such as navigation
+    // navigation.navigate('Home');
+  } catch (error) {
+    console.error('Google sign-in error:', error);
+  }
 }
+
 
 
 
@@ -35,8 +72,28 @@ const SignupScreen = () => {
   const [password, setPassword] = useState('');
   let navigation = useNavigation();
 
-  const handleSignup = () => {
-    // Your signup logic here
+  const handleSignup = async () => {
+    try {
+      // Sign up logic
+      // For demonstration purposes, I'm assuming you have validated the input fields
+
+      // Save user details to AsyncStorage
+      await AsyncStorage.setItem('userEmail', email);
+      await AsyncStorage.setItem('userName', name);
+
+      // Save user details to Firestore
+      await firestore().collection('Users').add({
+        name: name,
+        email: email,
+        // Add more user details as needed
+      });
+
+      // After saving details, you can navigate to the desired screen
+      // For example, navigate to the Home screen
+      // navigation.navigate('Home');
+    } catch (error) {
+      console.error('Error signing up:', error);
+    }
   };
 
   return (

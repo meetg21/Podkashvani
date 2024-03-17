@@ -1,42 +1,96 @@
-import React from 'react'
-import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import { useNavigation } from '@react-navigation/native';
+import { More, PlayCircle } from 'iconsax-react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import firestore from '@react-native-firebase/firestore'; // Import Firestore from Firebase
 
 const PodcastComponent = ({ props }) => {
-    const {header, count, time, description} = props
-    
-    let lecture = "Lecture";
-    if(count > 1){
-        lecture = "Lectures"
-    }
+    let navigation = useNavigation();
+    const [underScoreFile, setUnderScoreFile] = useState(null);
+    const { count, time, description } = props;
+
+    let lecture = count > 1 ? "Lectures" : "Lecture";
+
+    const getPodcastNameFromUrl = (url) => {
+        const splitByFolder = url.split('%2F');
+        const fileNameWithExtension = splitByFolder.pop();
+        const fileName = fileNameWithExtension.split('.')[0];
+        const nameWithoutUnderscores = fileName.replace(/_/g, ' ');
+        return nameWithoutUnderscores;
+    };
+
+    const [podcastData, setPodcastData] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            console.log("Props",props.time);
+            const name = getPodcastNameFromUrl(props);
+            const docId = name.split('%2F').pop(); // Construct the document ID from the filename
+            console.log("Document ID:", underScoreFile);
+            const docRef = firestore().collection('StackX').doc(`${docId}.mp3`);
+
+            try {
+                const docSnapshot = await docRef.get();
+                if (docSnapshot.exists) {
+                    const data = docSnapshot.data();
+                    setPodcastData(data);
+                } else {
+                    console.log("Document does not exist!");
+                }
+            } catch (error) {
+                console.error("Error fetching document:", error);
+            }
+        };
+
+        fetchData();
+    }, [props]);
+
+    useEffect(() => {
+        setUnderScoreFile(getPodcastNameFromUrl(props)); // Set underscored file name when component mounts
+    }, []); // Empty dependency array to run only once when component mounts
+
+    useEffect(() => {
+        console.log("Podcast data:", podcastData);
+    }, [podcastData]);
+
+    const handleClick = () => {
+        navigation.navigate('PodcastPlayer', {
+            name: underScoreFile,
+            url: props
+        });
+    };
 
     return (
-        <View style={styles.container}>
+        <View style={styles.container} >
             <Image
-                source={require('../assets/images/podcast_image.png')} 
+                source={require('../assets/images/podcast_image.png')}
                 style={styles.podcastImage}
             />
             <View style={styles.innerContainer}>
-                <Text style={styles.podcastHeader} numberOfLines={1} ellipsizeMode="tail">{header}</Text>
+                <Text style={styles.podcastHeader} numberOfLines={1} ellipsizeMode="tail">{underScoreFile}</Text>
                 <View style={styles.optionsContainer}>
-                    <Text style={styles.optionsText}>{count} {lecture}</Text>
+                    <View style={{display:'flex',flexDirection:'row'}}>
                     <Image
-                        source={require('../assets/images/clock.png')} 
-                        style={{height: 18, width: 23, marginLeft: 10}}
+                        source={require('../assets/images/clock.png')}
+                        style={{ height: 18, width: 23, marginLeft: 10 }}
                     />
-                    <Text style={styles.optionsText}>{time}</Text>
+                    <Text style={styles.optionsText}>{podcastData ? podcastData.episode_duration : '3:27'}</Text>
+                    </View>
                     <TouchableOpacity>
-                        <Text style={[styles.optionsText, { marginLeft: 10, fontWeight: "900"}]}>...</Text>
+                        <More size="32" color="#FF8A65" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleClick}>
+                        <PlayCircle size="32" color="#FF8A65" variant="Bold" />
                     </TouchableOpacity>
                 </View>
-                <Text style={{color: "#120537"}} numberOfLines={3} ellipsizeMode="tail">{description}</Text>
+                <Text style={{ color: "#120537" }} numberOfLines={3} ellipsizeMode="tail">{}</Text>
             </View>
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
-        // backgroundColor: "red",
         padding: 20,
         display: "flex",
         flexDirection: "row",
@@ -50,23 +104,22 @@ const styles = StyleSheet.create({
     podcastImage: {
         height: 100,
         width: 100,
-    }, 
+    },
     innerContainer: {
         marginLeft: 20,
         maxHeight: 100,
         flex: 1,
-        // backgroundColor: "green",
         overflow: "hidden",
     },
-
     optionsContainer: {
         display: "flex",
         flexDirection: "row",
-        justifyContent: "start",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     optionsText: {
         color: "#120537",
     }
 });
 
-export default PodcastComponent
+export default PodcastComponent;

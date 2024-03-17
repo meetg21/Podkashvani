@@ -15,6 +15,7 @@ import Upload from './src/screens/Upload';
 import PlayPodcast from './src/screens/PlayPodcast';
 import Customize from './src/screens/Customize';
 import Home from './src/screens/Home';
+import Search from './src/screens/Search';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,12 +28,13 @@ export default function Main() {
             headerShown: false,
           }}>
           {/* <Stack.Screen name="Home" component={App} /> */}
-          {/* <Stack.Screen name="Login" component={Login} /> */}
-          {/* <Stack.Screen name="PodcastPlayer" component={PodcastPlayer} /> */}
-          {/* <Stack.Screen name="PlayPodcast" component={PlayPodcast} /> */}
-          {/* <Stack.Screen name="Profile" component={Profile} /> */}
+          <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Profile" component={Profile} />
+         
+          <Stack.Screen name="PodcastPlayer" component={PodcastPlayer} />
           <Stack.Screen name="Customize" component={Customize} />
+          <Stack.Screen name="SearchStatus" component={Search} />
         </Stack.Navigator>
       </PaperProvider>
     </NavigationContainer>

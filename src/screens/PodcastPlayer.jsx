@@ -9,25 +9,14 @@ import {Next} from 'iconsax-react-native';
 import {Pause} from 'iconsax-react-native';
 import {Play} from 'iconsax-react-native';
 import {Back} from 'iconsax-react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 
-const podcasts = [
-    {
-      image: require('../assets/images/podcast_image.png'),
-      title: 'Podcast Title 1',
-      author: 'Author 1',
-      audio: 'hurayyy.mp3',
-    },
-    {
-      image: require('../assets/images/podcast_image.png'),
-      title: 'Podcast Title 2',
-      author: 'Author 2',
-      audio: 'dialogue.mp3',
-    },
-    
-  ];
+
 
 const PodcastPlayer = () => {
+    const route = useRoute();
+    const { name, url } = route.params;
     const [isPlaying, setIsPlaying] = useState(false);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
@@ -35,6 +24,24 @@ const PodcastPlayer = () => {
     const soundRef = useRef(null);
     const timerRef = useRef(null);
     const [pausedTime, setPausedTime] = useState(0);
+    const navigation = useNavigation();
+
+    const podcasts = [
+        {
+          image: require('../assets/images/podcast_image.png'),
+          title:name,
+          author: 'Milind Nair',
+          audio: url
+        },
+        {
+          image: require('../assets/images/podcast_image.png'),
+          title: 'Podcast Title 2',
+          author: 'Milind Nair',
+          audio: 'https://firebasestorage.googleapis.com/v0/b/podkashvani.appspot.com/o/MemSec%2F2.mp3?alt=media&token=875d074f-f5a3-4f99-aa73-3f5a86da9f1b',
+        },
+        
+      ];
+
 
     useEffect(() => {
         if (isPlaying) {
@@ -121,7 +128,7 @@ const PodcastPlayer = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton}>
+                <TouchableOpacity style={styles.backButton} onPress={()=> navigation.goBack()}>
                     <Back size="32" color="#120537"/>
                 </TouchableOpacity>
             </View>

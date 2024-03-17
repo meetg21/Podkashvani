@@ -1,60 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PodcastComponent from '../components/PodcastComponent';
 import BottomNavBar from '../components/BottomNavBar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Profile = () => {
   const [tabState, setTabState] = useState(true); // State to track the active tab
+  const [podcastData, setPodcastData] = useState([]);
+  const [podcastNames, setPodcastNames] = useState([]);
 
-  const podcastAPI = {
-    "my files": [
-      {
-        "header": "Podcast Title 1",
-        "time": "30:15",
-        "count": 10,
-        "description": "This is the description for Podcast 1. It covers various topics related to technology."
-      },
-      {
-        "header": "Podcast Title 2",
-        "time": "25:30",
-        "count": 8,
-        "description": "Description for Podcast 2. This podcast focuses on current events and news updates."
-      },
-      {
-        "header": "Podcast Title 3",
-        "time": "40:45",
-        "count": 12,
-        "description": "Description for Podcast 3. This podcast features interviews with industry experts."
-      },
-      {
-        "header": "Podcast Title 4",
-        "time": "50:30",
-        "count": 15,
-        "description": "Description for Podcast 4. This podcast discusses the latest trends in the industry."
-      },
-      {
-        "header": "Podcast Title 5",
-        "time": "35:20",
-        "count": 7,
-        "description": "Description for Podcast 5. This podcast explores the world of entrepreneurship."
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch podcast data from AsyncStorage
+        const data = await AsyncStorage.getItem(tabState ? 'mp3Urls' : 'savedPodcasts');
+        if (data) {
+          setPodcastData(JSON.parse(data));
+        }
+      } catch (error) {
+        console.error('Error fetching podcast data from AsyncStorage:', error);
       }
-    ],
-    "saved": [
-      {
-        "header": "Saved Podcast Title 1",
-        "time": "20:10",
-        "count": 5,
-        "description": "Description for Saved Podcast 1. This podcast is saved for later listening."
-      },
-      {
-        "header": "Saved Podcast Title 2",
-        "time": "15:45",
-        "count": 3,
-        "description": "Description for Saved Podcast 2. Another saved podcast description."
-      }
-    ]
-  };
+    };
+
+    fetchData();
+  }, [tabState]); // Re-fetch data when tabState changes
+
+  useEffect(() => {
+    const extractNames = () => {
+        const names = podcastData.map(url => getPodcastNameFromUrl(url));
+        setPodcastNames(names);
+    };
+
+    extractNames();
+}, [podcastData]);
+
+const getPodcastNameFromUrl = (url) => {
+    const splitByFolder = url.split('%2F');
+    const fileNameWithExtension = splitByFolder.pop();
+    const fileName = fileNameWithExtension.split('.')[0];
+    // const nameWithoutUnderscores = fileName.replace(/_/g, ' ');
+    return fileName;
+};
+
+console.log('Podcast names:', podcastData);
+
+AsyncStorage.setItem('podcastNames', podcastNames);
+
+
+
 
   const switchTabs = (tab) => {
     setTabState(tab);
@@ -67,8 +61,8 @@ const Profile = () => {
           source={require('../assets/images/profile_image.png')}
           style={styles.profileImage}
         />
-        <Text style={styles.profileMail}>soroushnorozyui@gmail.com</Text>
-        <Text style={styles.profileText}>Soroushnrz</Text>
+        <Text style={styles.profileMail}>milind.nair@somaiya.com</Text>
+        <Text style={styles.profileText}>Milind Nair</Text>
 
         <View style={styles.tabs}>
           <TouchableOpacity onPress={() => switchTabs(true)}>
@@ -81,21 +75,13 @@ const Profile = () => {
       </View>
 
       <View style={styles.podcastContainer}>
-        <Text style={styles.podcastHeader}>MY PODCASTS</Text>
+        {/* <Text style={styles.podcastHeader}>{tabState ? 'My Podcasts' : "Saved"}</Text> */}
         <ScrollView contentContainerStyle={styles.scrollView}>
-          {tabState ? (
-            podcastAPI["my files"].map((podcast, index) => (
-              <View key={index} style={styles.podcastInnerContainer}>
-                <PodcastComponent props={podcast} />
-              </View>
-            ))
-          ) : (
-            podcastAPI["saved"].map((podcast, index) => (
-              <View key={index} style={styles.podcastInnerContainer}>
-                <PodcastComponent props={podcast} />
-              </View>
-            ))
-          )}
+          {podcastData.map((podcast, index) => (
+            <View key={index} style={styles.podcastInnerContainer}>
+              <PodcastComponent props={podcast} />
+            </View>
+          ))}
         </ScrollView>
       </View>
       <BottomNavBar></BottomNavBar>
@@ -113,7 +99,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   profileText: {
-    marginTop: 10,
+    // marginTop: 10,/
     color: "#fff",
     alignSelf: "center",
     fontSize: 25,
@@ -128,14 +114,14 @@ const styles = StyleSheet.create({
   },
   profileImage: {
     alignSelf: "center",
-    height: 140,
-    width: 140,
+    height: 120,
+    width: 120,
     marginTop: 20,
   },
   tabs: {
     flexDirection: "row",
     justifyContent: "space-evenly",
-    marginTop: 30,
+    marginTop: 20,
   },
   tabText: {
     color: "#aaa",

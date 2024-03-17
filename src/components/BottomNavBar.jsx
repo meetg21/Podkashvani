@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { BookSaved, Home2, SearchStatus, Profile } from 'iconsax-react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const BottomNavBar = ({ activeScreen }) => {
+  const navigation = useNavigation();
   const [activeIcon, setActiveIcon] = useState(activeScreen);
 
   const handleIconPress = (screenName) => {
     setActiveIcon(screenName);
     // You can add logic here to navigate to the selected screen
+    navigation.navigate(`${screenName}`); // Example: navigation.navigate('Profile')
   };
 
   return (
